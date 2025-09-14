@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\BusinessProfile;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -33,12 +36,28 @@ class UserFactory extends Factory
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * Configure the model factory.
      */
-    public function unverified(): static
+    public function configure(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        return $this->afterCreating(function (User $user) {
+            // By default, every user is a consumer
+            $consumerRole = Role::where('slug', 'consumer')->first();
+            $user->roles()->attach($consumerRole);
+        });
+    }
+
+    /**
+     * Indicate that the user is a retailer.
+     */
+    public function retailer(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $retailerRole = Role::where('slug', 'retailer')->first();
+            $user->roles()->attach($retailerRole);
+
+            // Create a business profile for the retailer
+            BusinessProfile::factory()->create(['user_id' => $user->id]);
+        });
     }
 }
