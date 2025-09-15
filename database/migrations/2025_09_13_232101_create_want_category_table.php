@@ -12,11 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('want_category', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-            $table->primary(['want_id', 'category_id']);
+            $table->id(); // Primary key
             $table->foreignId('want_id')->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->timestamps();
+
+            // Ensures the same category can't be added to a want twice
+            $table->unique(['want_id', 'category_id']);
         });
     }
 

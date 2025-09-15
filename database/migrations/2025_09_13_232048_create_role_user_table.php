@@ -12,11 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('role_user', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-            $table->primary(['user_id', 'role_id']); // Composite primary key
+            $table->id(); // Primary Key: auto-incrementing 'id'
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('role_id')->constrained()->onDelete('cascade');
+            $table->timestamps();
+
+            // Ensures a user can't have the same role twice
+            $table->unique(['user_id', 'role_id']);
         });
     }
 
