@@ -55,16 +55,39 @@ class User extends Authenticatable
         return $this->hasOne(BusinessProfile::class);
     }
 
-
-
     public function wants(): HasMany
     {
         return $this->hasMany(Want::class);
     }
 
-
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);
+    }
+
+    public function conversations(): HasMany
+    {
+        return $this->hasMany(Conversation::class);
+    }
+
+    public function sentMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    /**
+     * Check if user has a role.
+     */
+    public function hasRole(string $roleName): bool
+    {
+        return $this->roles()->where('name', $roleName)->exists();
+    }
+
+    /**
+     * Check if user is a business.
+     */
+    public function isBusiness(): bool
+    {
+        return $this->businessProfile()->exists();
     }
 }

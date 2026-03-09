@@ -12,6 +12,32 @@ class BusinessProfile extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'business_name',
+        'description',
+        'website',
+        'phone',
+        'address',
+        'city',
+        'state',
+        'zip_code',
+        'country',
+        'latitude',
+        'longitude',
+        'is_verified',
+        'verified_at',
+        'logo_path',
+        'service_radius_miles',
+    ];
+
+    protected $casts = [
+        'is_verified' => 'boolean',
+        'verified_at' => 'datetime',
+        'latitude' => 'decimal:7',
+        'longitude' => 'decimal:7',
+    ];
+
     /**
      * Get the user that owns the business profile.
      */
@@ -34,5 +60,21 @@ class BusinessProfile extends Model
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
+    }
+
+    /**
+     * Get the conversations for this business.
+     */
+    public function conversations(): HasMany
+    {
+        return $this->hasMany(Conversation::class);
+    }
+
+    /**
+     * Scope to get verified businesses.
+     */
+    public function scopeVerified($query)
+    {
+        return $query->where('is_verified', true);
     }
 }

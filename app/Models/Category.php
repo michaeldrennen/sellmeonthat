@@ -12,6 +12,14 @@ class Category extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'slug',
+        'description',
+        'parent_id',
+        'icon',
+    ];
+
     /**
      * Get the parent category of this category.
      */
@@ -42,5 +50,13 @@ class Category extends Model
     public function wants(): BelongsToMany
     {
         return $this->belongsToMany(Want::class);
+    }
+
+    /**
+     * Scope to get only top-level categories.
+     */
+    public function scopeTopLevel($query)
+    {
+        return $query->whereNull('parent_id');
     }
 }

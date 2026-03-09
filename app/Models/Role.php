@@ -13,6 +13,11 @@ class Role extends Model
     // No timestamps needed for this table
     public $timestamps = false;
 
+    protected $fillable = [
+        'name',
+        'description',
+    ];
+
     /**
      * The users that belong to the role.
      */

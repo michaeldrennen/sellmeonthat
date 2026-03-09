@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\BusinessProfileController;
+use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WantController;
 use App\Http\Controllers\OfferController;
@@ -23,15 +26,19 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Wants
+    Route::resource('wants', WantController::class);
 
-    //// Routes that require a user to be logged in
-    //Route::get('/dashboard', function () {
-    //    return view('dashboard');
-    //})->name('dashboard');
-
-    Route::resource('wants', \App\Http\Controllers\WantController::class);
+    // Offers
     Route::resource('wants.offers', OfferController::class)->shallow();
     Route::patch('/offers/{offer}/accept', [OfferController::class, 'accept'])->name('offers.accept');
+
+    // Business Profiles
+    Route::resource('business-profiles', BusinessProfileController::class);
+
+    // Conversations & Messages
+    Route::resource('conversations', ConversationController::class)->only(['index', 'show', 'store']);
+    Route::post('/conversations/{conversation}/messages', [MessageController::class, 'store'])->name('conversations.messages.store');
 });
 
 require __DIR__.'/auth.php';
